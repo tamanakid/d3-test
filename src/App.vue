@@ -1,18 +1,34 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div>
+      <button @click="active = 1">GraphOne</button>
+      <button @click="active = 2">GraphTwo</button>
+    </div>
+    <GraphOne v-if="active === 1"/>
+    <GraphTwo v-if="active === 2"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import GraphOne from './components/GraphOne.vue'
+import GraphTwo from './components/GraphTwo.vue'
+
 
 export default {
   name: 'app',
+
   components: {
-    HelloWorld
+    GraphOne,
+    GraphTwo
+  },
+
+  data() {
+    return {
+      active: 1,
+    };
   }
+
 }
 </script>
 
