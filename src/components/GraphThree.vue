@@ -3,17 +3,25 @@
     <svg :width="svgWidth" :height="svgHeight" v-if="root">
       <g>
         <!-- :width="xScale.bandwidth()" :height="svgHeight - yScale(item[yKey])" -->
-        <template v-for="(item, i) in rootLeaves">
-          <rect
+        <template v-for="(item, i) in rootDepth1">
+          <!-- -->
+          <g
             :ref="`rect${i}`"
             :key="`rect${i}`"
-            :x="item.x0"
-            :y="item.y0"
-            :width="item.x1 - item.x0"
-            :height="item.y1 - item.y0"
             class="bar-positive"
-            @click="zoom(item)"
-          ></rect>
+          >
+            <template v-if="item.children">
+              <rect
+                v-for="child in item.children"
+                :key="child.data.name"
+                :x="child.x0"
+                :y="child.y0"
+                :width="child.x1 - child.x0"
+                :height="child.y1 - child.y0"
+                @click="zoom(item)"
+              ></rect>
+            </template>
+          </g>
           <text
             :key="`text${i}`"
             :x="item.x0 + 5"
@@ -37,7 +45,7 @@ import { selectAll } from "d3-selection";
 import children from './children';
 
 export default {
-  name: 'GraphOne',
+  name: 'GraphThree',
 
   props: {
     msg: String,
@@ -85,6 +93,10 @@ export default {
   computed: {
     rootLeaves() {
       return this.root && this.root.leaves() || [];
+    },
+
+    rootDepth1() {
+      return this.root.descendants().filter(node => node.depth === 1);
     },
 
     dataMax() {

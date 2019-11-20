@@ -4,15 +4,18 @@
     <div>
       <button @click="active = 1">GraphOne</button>
       <button @click="active = 2">GraphTwo</button>
+      <button @click="active = 3">GraphThree</button>
     </div>
     <GraphOne v-if="active === 1"/>
     <GraphTwo v-if="active === 2"/>
+    <GraphThree v-if="active === 3"/>
   </div>
 </template>
 
 <script>
 import GraphOne from './components/GraphOne.vue'
 import GraphTwo from './components/GraphTwo.vue'
+import GraphThree from './components/GraphThree.vue'
 
 
 export default {
@@ -20,12 +23,14 @@ export default {
 
   components: {
     GraphOne,
-    GraphTwo
+    GraphTwo,
+    GraphThree
   },
 
   data() {
     return {
       active: 1,
+      // -
     };
   }
 

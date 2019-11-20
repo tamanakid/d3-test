@@ -32,6 +32,6 @@ export default {
         { name: "mister_m", group: "D", value: 16, colname: "level3" },
         { name: "mister_n", group: "D", value: 28, colname: "level3" }
       ],
-    }
+    },
   ],
 };
