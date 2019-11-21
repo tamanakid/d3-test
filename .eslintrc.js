@@ -5,7 +5,12 @@ module.exports = {
   },
   extends: ["plugin:vue/essential", "eslint:recommended"],
   rules: {
+    options: {
+      emitWarning: true,
+      failOnWarning: false,
+    },
     "object-curly-newline": ["error", { multiline: true }],
+    "vue/no-unused-vars": "warn",
     "no-nested-ternary": "off",
     "no-lonely-if": "off",
     "no-shadow": "off",
@@ -41,5 +46,5 @@ module.exports = {
   },
   parserOptions: {
     parser: "babel-eslint"
-  }
+  },
 };
