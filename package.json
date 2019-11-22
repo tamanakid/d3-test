@@ -21,6 +21,9 @@
     "eslint-plugin-vue": "^5.0.0",
     "vue-template-compiler": "^2.6.10"
   },
+  "resolutions": {
+    "eslint-loader": "2.1.2"
+  },
   "postcss": {
     "plugins": {
       "autoprefixer": {}

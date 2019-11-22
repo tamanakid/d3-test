@@ -85,7 +85,7 @@ import { max, min } from "d3-array";
 import { hierarchy, treemap } from "d3-hierarchy";
 // import { selectAll } from "d3-selection";
 // import { transition } from "d3-transition";
-import children from './children';
+import children from '@/utils/childrenTwo';
 
 export default {
   name: 'GraphThree',
@@ -121,11 +121,13 @@ export default {
     this.svgWidth = this.$refs.container.offsetWidth;
     this.svgHeight = this.svgWidth / 2.5;
 
-    this.root = hierarchy(this.items)
+    this.root = hierarchy(this.items, this.getEmployees)
       .sum(function(d) {
-        return d.value
+        return d.valueX
       }) // Here the size of each leave is given in the 'value' field in input data
-      .sort((a, b) => b.value - a.value);
+      .sort((a, b) => {
+        return b.value - a.value
+      });
 
     treemap()
       // .tile(treemap().tile)
@@ -158,9 +160,34 @@ export default {
   },
 
   methods: {
+    getEmployees(item) {
+      return item.employees; // item[this.childrenName];
+    },
+
     zoom(item) {
       console.log(item);
-      this.rootDepth2 = this.items.children.find(child => child.name === item.data.name);
+      // this.rootDepth2 = this.items.children.find(child => child.name === item.data.name);
+      this.rootDepth2 = this.items.employees.find(child => child.name === item.data.name);
+      // this.rootDepth2 = item.children;
+
+      this.root = hierarchy(this.rootDepth2, this.getEmployees)
+      .sum(function(d) {
+        return d.valueX
+      }) // Here the size of each leave is given in the 'value' field in input data
+      .sort((a, b) => b.value - a.value);
+
+      treemap()
+        // .tile(treemap().tile)
+        .size([this.svgWidth, this.svgHeight])
+        .padding(2)(this.root);
+
+      this.isFirst = false;
+    },
+    
+    zoomOld(item) {
+      console.log(item);
+      // this.rootDepth2 = this.items.children.find(child => child.name === item.data.name);
+      this.rootDepth2 = this.items.employees.find(child => child.name === item.data.name);
       // this.rootDepth2 = item.children;
 
       this.root = hierarchy(this.rootDepth2)
@@ -262,8 +289,11 @@ export default {
 
 
 /* animations */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 1s;
+.fade-enter-active {
+  transition: opacity 0.7s ease 0.7s;
+}
+.fade-leave-active {
+  transition: opacity 0.7s ease;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;

@@ -34,7 +34,7 @@ import { max, min } from "d3-array";
 import { hierarchy, treemap } from "d3-hierarchy";
 import { selectAll } from "d3-selection";
 // import { transition } from "d3-transition";
-import children from './children';
+import children from '@/utils/children';
 
 export default {
   name: 'GraphOne',
