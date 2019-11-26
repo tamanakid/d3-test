@@ -7,15 +7,19 @@
       <button @click="active = 3">GraphThree</button>
       <button @click="active = 4">GraphFour</button>
     </div>
-    <GraphOne v-if="active === 1"/>
-    <GraphTwo v-if="active === 2"/>
-    <GraphThree v-if="active === 3"/>
-    <GraphFour
-      v-if="active === 4"
-      :dataName="'warehouses'"
-      :valueName="'itemCount'"
-      :childrenArrayNames="['locationInfo', 'warehouseChildrenInfo']"
-    />
+    <div class="container">
+      <div class="row graphs">
+        <GraphOne v-if="active === 1"/>
+        <GraphTwo v-if="active === 2"/>
+        <GraphThree v-if="active === 3"/>
+        <GraphFour
+          v-if="active === 4"
+          :dataName="'warehouses'"
+          :valueName="'itemCount'"
+          :childrenArrayNames="['locationInfo', 'warehouseChildrenInfo']"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -53,5 +57,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.graphs {
+  height: 80vh;
 }
 </style>
