@@ -25,9 +25,15 @@
           </transition>
         </svg>
       </div>
-      <div v-if="isTooltipActive" class="rect-tooltip col-4">
-        {{ tooltipData }}
+      <!-- rect-tooltip -->
+      <div v-if="isTooltipActive" class="svg-rect-tooltip offset-1 col-3">
+        <p>{{ tooltipData1 }}</p>
+        <p>{{ tooltipData2 }}</p>
+        <p>{{ tooltipData3 }}</p>
       </div>
+    </div>
+    <div v-if="oldTreemapItems">
+      <button @click="drawOldTreemap">Back</button>
     </div>
   </article>
 </template>
@@ -74,11 +80,14 @@ export default {
       currentGraph: '',
       allItems: [],
       treemapItems: {},
+      oldTreemapItems: {},
       svgWidth: 0,
       svgHeight: 0,
       // tooltip
       isTooltipActive: true,
-      tooltipData: '',
+      tooltipData1: '',
+      tooltipData2: '',
+      tooltipData3: '',
     };
   },
 
@@ -104,10 +113,25 @@ export default {
         .sum((item) => item[this.valueName]) // item[this.valueName]
         .sort((a, b) => b.value - a.value);
 
+      const oldTreemap = this.treemapItems.children.find(child => child.data.id === itemData.id);
+      this.oldTreemapItems = oldTreemap && oldTreemap.parent;
+
       treemap()
         .size([this.svgWidth, this.svgHeight])
         .paddingInner(0.5)
         .paddingOuter(1.5)(this.treemapItems);
+    },
+
+    drawOldTreemap() {
+      this.currentGraph = `${this.oldTreemapItems.id}-${this.oldTreemapItems.name}`;
+
+      this.treemapItems = this.oldTreemapItems;
+
+      treemap()
+        .size([this.svgWidth, this.svgHeight])
+        .paddingInner(0.5)
+        .paddingOuter(1.5)(this.treemapItems);
+      
     },
 
 
@@ -123,10 +147,14 @@ export default {
     doShowTooltip(item) {
       if (item) {
         this.isTooltipActive = true;
-        this.tooltipData = item.data.name;
+        this.tooltipData1 = item.data.name;
+        this.tooltipData2 = `Total: ${item.value}`;
+        this.tooltipData3 = `Elements: ${item.children ? item.children.length : '0'}`;
       } else {
         this.isTooltipActive = false;
-        this.tooltipData = null;
+        this.tooltipData1 = '';
+        this.tooltipData2 = '';
+        this.tooltipData3 = '';
       }
     },
   }
@@ -178,9 +206,9 @@ export default {
 }
 
 
-.rect-tooltip {
-  background: rgba(0, 0, 0, 0.5);
-  height: 10%;
+.svg-rect-tooltip {
+  background: rgba(0, 80, 80, 0.15);
+  height: 20%;
 }
 
 
