@@ -6,38 +6,10 @@
         <transition name="fade">
           <g :key="currentGraph">
             <template v-for="(item, i) in treemapItems.children" v-if="item.value">
-              <g :ref="`rect${i}`" :key="`rect${i}`" :class="barClasses(item, i)" @mouseenter="showTooltip(item)" @mouseleave="hideTooltip(item)">
-                <template v-if="item.children && item.children.length > 1">
-                  <rect
-                    v-for="child in item.children"
-                    :key="child.data.name"
-                    :x="child.x0"
-                    :y="child.y0"
-                    :width="child.x1 - child.x0"
-                    :height="child.y1 - child.y0"
-                    @click="zoom(item)"
-                  ></rect>
-                </template>
-                <template v-else-if="item.children && item.children.length === 0">
-                  <rect
-                    :key="item.data.name"
-                    :x="item.x0"
-                    :y="item.y0"
-                    :width="item.x1 - item.x0"
-                    :height="item.y1 - item.y0"
-                    @click="zoom(item)"
-                  ></rect>
-                </template>
-                <template v-else>
-                  <rect
-                    :key="item.data.name"
-                    :x="item.x0"
-                    :y="item.y0"
-                    :width="item.x1 - item.x0"
-                    :height="item.y1 - item.y0"
-                  ></rect>
-                </template>
-              </g>
+              <Block
+                :key="`rect${i}`" :item="item" :index="i"
+                @draw-tree="drawTreemap"
+              />
               <template v-if="treemapItems.value < (item.value * 10)">
                 <text :key="`text-label${i}`" :x="item.x0 + 5" :y="item.y0 + 15" font-size="15px">
                   {{ item.data.name }}
@@ -68,14 +40,17 @@ import { hierarchy, treemap } from "d3-hierarchy";
 import dataset from '@/utils/dataset';
 import parseWarehouses from '@/utils/parseWarehouses';
 // import Tooltip from './Tooltip.vue';
+import Block from './Block.vue';
+
 
 export default {
   name: 'GraphFour',
 
-  // components: {
-  //   tooltip: Tooltip,
-  //   // -
-  // },
+  components: {
+    // tooltip: Tooltip,
+    Block
+    // -
+  },
 
   props: {
     dataName: {
@@ -121,16 +96,10 @@ export default {
 
 
   methods: {
-    barClasses(item, i) {
-      let classes = `bar-positive-${i} `;
-      if (item.children && item.children.length > 0) {
-        classes += 'bar-positive-clickable';
-      }
-      return classes;
-    },
+    drawTreemap(itemData) {
+      this.currentGraph = `${itemData.id}-${itemData.name}`;
 
-    drawTreemap(items) {
-      this.treemapItems = hierarchy(items, this.getChildren)
+      this.treemapItems = hierarchy(itemData, this.getChildren)
         .sum((item) => item[this.valueName]) // item[this.valueName]
         .sort((a, b) => b.value - a.value);
 
@@ -148,34 +117,6 @@ export default {
       //   return fullArray.concat(item[arrayName])
       // }, []);
       return item.childrenArray; // item[this.childrenName];
-    },
-
-    zoom(item) {
-      // check if has children
-      /*
-      const itemSelected = this.childrenArrayNames.reduce((fullArray, arrayName) => {
-        return fullArray.concat(item[arrayName]);
-      }, []).find(child => child.id === item.data.id);
-
-      const itemSelectedList = this.childrenArrayNames.reduce((fullArray, arrayName) => {
-        return fullArray.concat(itemSelected[arrayName]);
-      }, []);
-      */
-
-      this.currentGraph = `${item.data.id}-${item.data.name}`
-      this.drawTreemap(item.data);
-    },
-
-    showTooltip(item) {
-      console.log('Enter:', item);
-      const childHovered = this.treemapItems.children.find(child => child.data.id === item.data.id);
-      childHovered.showTooltip = true;
-    },
-
-    hideTooltip(item) {
-      console.log('Leave:', item);
-      const childHovered = this.treemapItems.children.find(child => child.data.id === item.data.id);
-      childHovered.showTooltip = false;
     },
   }
 
