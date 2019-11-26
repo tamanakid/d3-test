@@ -1,35 +1,33 @@
 <template>
-  <article class="offset-col-4 col-4">
+  <article class="offset-3 col-6">
     <div>{{ graphTitle }}</div>
-    <div ref="container" class="svg-container" align="center">
-      <svg :width="svgWidth" :height="svgHeight" v-if="treemapItems.children">
-        <transition name="fade">
-          <g :key="currentGraph">
-            <template v-for="(item, i) in treemapItems.children" v-if="item.value">
-              <Block
-                :key="`rect${i}`" :item="item" :index="i"
-                @draw-tree="drawTreemap"
-              />
-              <template v-if="treemapItems.value < (item.value * 10)">
-                <text :key="`text-label${i}`" :x="item.x0 + 5" :y="item.y0 + 15" font-size="15px">
-                  {{ item.data.name }}
-                </text>
-                <text :key="`text-value${i}`" :x="item.x0 + 5" :y="item.y0 + 40" font-size="15px">
-                  {{ item.value }}
-                </text>
+    <div class="row" style="height: 100%">
+      <div ref="container" class="svg-container col-8" align="center">
+        <svg :width="svgWidth" :height="svgHeight" v-if="treemapItems.children">
+          <transition name="fade">
+            <g :key="currentGraph">
+              <template v-for="(item, i) in treemapItems.children" v-if="item.value">
+                <Block
+                  :key="`rect${i}`" :item="item" :index="i"
+                  @draw-tree="drawTreemap"
+                  @show-tooltip="doShowTooltip"
+                />
+                <template v-if="treemapItems.value < (item.value * 10)">
+                  <text :key="`text-label${i}`" :x="item.x0 + 5" :y="item.y0 + 15" font-size="15px">
+                    {{ item.data.name }}
+                  </text>
+                  <text :key="`text-value${i}`" :x="item.x0 + 5" :y="item.y0 + 40" font-size="15px">
+                    {{ item.value }}
+                  </text>
+                </template>
               </template>
-              <template v-else-if="item.showTooltip">
-                <text :key="`text-label${i}`" :x="item.x0 + 5" :y="item.y0 + 15" font-size="15px" >
-                  {{ item.data.name }}
-                </text>
-                <text :key="`text-value${i}`" :x="item.x0 + 5" :y="item.y0 + 40" font-size="15px">
-                  {{ item.value }}
-                </text>
-              </template>
-            </template>
-          </g>
-        </transition>
-      </svg>
+            </g>
+          </transition>
+        </svg>
+      </div>
+      <div v-if="isTooltipActive" class="rect-tooltip col-4">
+        {{ tooltipData }}
+      </div>
     </div>
   </article>
 </template>
@@ -78,6 +76,9 @@ export default {
       treemapItems: {},
       svgWidth: 0,
       svgHeight: 0,
+      // tooltip
+      isTooltipActive: true,
+      tooltipData: '',
     };
   },
 
@@ -118,6 +119,16 @@ export default {
       // }, []);
       return item.childrenArray; // item[this.childrenName];
     },
+
+    doShowTooltip(item) {
+      if (item) {
+        this.isTooltipActive = true;
+        this.tooltipData = item.data.name;
+      } else {
+        this.isTooltipActive = false;
+        this.tooltipData = null;
+      }
+    },
   }
 
 };
@@ -155,13 +166,21 @@ export default {
 }
 
 .svg-container {
+  /*
   display: inline-block;
+  */
   position: relative;
   width: 100%;
   height: 100%;
   padding-bottom: 1%;
   vertical-align: top;
   overflow: hidden;
+}
+
+
+.rect-tooltip {
+  background: rgba(0, 0, 0, 0.5);
+  height: 10%;
 }
 
 

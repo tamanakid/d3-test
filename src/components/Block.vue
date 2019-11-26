@@ -11,7 +11,7 @@
         @click="zoom(item)"
       ></rect>
     </template>
-    <template v-else-if="item.children && item.children.length === 0">
+    <template v-else-if="item.children && item.children.length === 1">
       <rect
         :key="item.data.name"
         :x="item.x0"
@@ -83,10 +83,11 @@ export default {
       this.$emit('draw-tree', item.data);
     },
 
-    showTooltip(item) {
-      console.log('Enter:', item);
+    showTooltip() {
+      console.log('Enter:', this.item);
       // const childHovered = this.treemapItems.children.find(child => child.data.id === item.data.id);
       // childHovered.showTooltip = true;
+      this.$emit('show-tooltip', this.item);
       this.isShowTooltip = true;
     },
 
@@ -94,6 +95,7 @@ export default {
       console.log('Leave:', item);
       // const childHovered = this.treemapItems.children.find(child => child.data.id === item.data.id);
       // childHovered.showTooltip = false;
+      this.$emit('show-tooltip', null);
       this.isShowTooltip = false;
     },
   }
